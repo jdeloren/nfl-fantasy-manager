@@ -4,6 +4,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
+
 ROOT_URL = "http://www.pro-football-reference.com/"
 TEAM_URL = "teams/"
 
@@ -15,7 +16,7 @@ NFL_TEAM_ARRAY = [
 
 def get_data(url):
     session = requests.session()
-    request = session.get(url)
+    request = session.get(url, timeout=10)
 
     return BeautifulSoup(request.content)
 
@@ -29,7 +30,12 @@ def get_teams_static():
     for team in NFL_TEAM_ARRAY:
         roster = get_roster_data_for_year(TEAM_URL + team)
         #print roster.find_all("td")
-        print roster.find_all("td", "player")
+        players = roster.find_all("td", {"data-stat" : "player"})
+
+
+        for player in players:
+            print "PLAYER: "
+            print player
 
 def get_teams():
     team_doc = get_data(ROOT_URL + TEAM_URL)
